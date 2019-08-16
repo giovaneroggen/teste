@@ -37,16 +37,10 @@ public class DiscussionFacade {
     }
 
     public Mono<Void> start(String id, DiscussionSessionRequest request) {
-        return this.findAvailableDiscussion(id)
+        return this.findAvailableToStart(id)
                    .map(d -> DiscussionMapper.map(d, request))
                    .flatMap(this.service::save)
                    .then();
-    }
-
-    private Mono<Discussion> findAvailableDiscussion(String id) {
-        return this.service
-                   .findAvailableDiscussion(id)
-                   .switchIfEmpty(Mono.defer(() -> Mono.error(new GenericException("discussion.not.available", HttpStatus.BAD_REQUEST))));
     }
 
     public Flux<DiscussionResponse> findAll() {
@@ -65,7 +59,7 @@ public class DiscussionFacade {
     }
 
     public Mono<Void> vote(String id, VoteRequest request) {
-        return this.findAvailableDiscussion(id)
+        return this.findAvailableToVote(id)
                    .flatMap(it ->
                        this.associateFacade
                            .findAvailableAssociateId(request.getAssociateId())
@@ -79,6 +73,19 @@ public class DiscussionFacade {
     public Mono<DiscussionResultResponse> result(String id) {
         return this.service
                    .findClosedSession(id)
-                   .map(DiscussionMapper::mapResult);
+                   .map(DiscussionMapper::mapResult)
+                   .switchIfEmpty(Mono.defer(() -> Mono.error(new GenericException("discussion.not.available", HttpStatus.BAD_REQUEST))));
+    }
+
+    private Mono<Discussion> findAvailableToVote(String id) {
+        return this.service
+                .findAvailableToVote(id)
+                    .switchIfEmpty(Mono.defer(() -> Mono.error(new GenericException("discussion.not.available", HttpStatus.BAD_REQUEST))));
+    }
+
+    private Mono<Discussion> findAvailableToStart(String id) {
+        return this.service
+                .findAvailableToStart(id)
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new GenericException("discussion.not.available", HttpStatus.BAD_REQUEST))));
     }
 }

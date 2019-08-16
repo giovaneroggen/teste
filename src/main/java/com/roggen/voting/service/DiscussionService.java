@@ -23,8 +23,12 @@ public class DiscussionService {
         return this.repository.findAll();
     }
 
-    public Mono<Discussion> findAvailableDiscussion(String id) {
+    public Mono<Discussion> findAvailableToStart(String id) {
         return this.repository.findByIdAndActiveFalseAndClosedFalse(id);
+    }
+
+    public Mono<Discussion> findAvailableToVote(String id) {
+        return this.repository.findByIdAndActiveTrueAndClosedFalse(id);
     }
 
     public Flux<Discussion> findAllExpiredAndCloseSession() {
@@ -50,4 +54,5 @@ public class DiscussionService {
                 .plusMinutes(d.getTimeout())
                 .isBefore(LocalDateTime.now());
     }
+
 }

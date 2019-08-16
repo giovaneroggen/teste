@@ -9,6 +9,8 @@ public interface DiscussionRepository extends ReactiveMongoRepository<Discussion
 
     Mono<Discussion> findByIdAndActiveFalseAndClosedFalse(String id);
 
+    Mono<Discussion> findByIdAndActiveTrueAndClosedFalse(String id);
+
     Flux<Discussion> findAllByActiveTrueAndClosedFalse();
 
     Mono<Discussion> findAllByActiveFalseAndClosedTrue(String id);

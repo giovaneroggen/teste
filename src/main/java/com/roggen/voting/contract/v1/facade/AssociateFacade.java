@@ -41,9 +41,8 @@ public class AssociateFacade {
     }
 
     public Mono<String> findAvailableAssociateId(String id) {
-        return this.service
-                   .findById(id)
-                   .map(Associate::getCpf)
+        return this.findById(id)
+                   .map(AssociateResponse::getCpf)
                    .flatMap(this.client::verifyIfAssociateCanVote)
                    .thenReturn(id);
     }

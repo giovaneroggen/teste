@@ -28,6 +28,6 @@ public enum VoteEnum {
                       .stream()
                       .filter(it -> it.getLabel().equalsIgnoreCase(value))
                       .findFirst()
-                      .orElseThrow(() -> new GenericException("invalid.vote.type", HttpStatus.BAD_REQUEST));
+                      .orElse(null);
     }
 }

@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.support.WebExchangeBindException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,8 +30,8 @@ public class ControllerAdviceConfiguration {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Response handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    @ExceptionHandler(WebExchangeBindException.class)
+    public Response handleMethodArgumentNotValidException(WebExchangeBindException e) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         log.error("ControllerAdviceConfiguration.handleMethodArgumentNotValidException={}", e);
         return new Response(status.getReasonPhrase(), status.value(), e.getMessage(), collectFieldErrors(e));
@@ -45,7 +45,7 @@ public class ControllerAdviceConfiguration {
         return new Response(status.getReasonPhrase(), status.value(), e.getMessage(), null);
     }
 
-    private List<ErrorInfo> collectFieldErrors(MethodArgumentNotValidException e) {
+    private List<ErrorInfo> collectFieldErrors(WebExchangeBindException e) {
         return e.getBindingResult()
                 .getFieldErrors()
                 .stream().map(fe -> new ErrorInfo(fe.getField(), fe.getDefaultMessage(), fe.getRejectedValue()))

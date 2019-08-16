@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping("/v1/discussions")
@@ -23,7 +25,7 @@ public class DiscussionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<DiscussionResponse> save(@RequestBody DiscussionRequest request){
+    public Mono<DiscussionResponse> save(@Valid @RequestBody DiscussionRequest request){
         return this.facade.save(request);
     }
 
@@ -34,7 +36,7 @@ public class DiscussionController {
 
     @PostMapping("/{id}/sessions")
     public Mono<Void> start(@PathVariable("id") String id,
-                            @RequestBody DiscussionSessionRequest request){
+                            @Valid @RequestBody DiscussionSessionRequest request){
         return this.facade.start(id, request);
     }
 
@@ -47,7 +49,7 @@ public class DiscussionController {
 
     @PostMapping("/{id}")
     public Mono<Void> vote(@PathVariable("id") String id,
-                           @RequestBody VoteRequest request){
+                           @Valid @RequestBody VoteRequest request){
         return this.facade.vote(id, request);
     }
 

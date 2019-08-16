@@ -23,6 +23,7 @@ public class AssociateClient {
                    .bodyToMono(AssociateResponse.class)
                    .map(AssociateResponse::getStatus)
                    .filter("ABLE_TO_VOTE"::equals)
-                   .thenEmpty(Mono.error(new GenericException("associate.unable", HttpStatus.BAD_REQUEST)));
+                   .switchIfEmpty(Mono.error(new GenericException("associate.unable", HttpStatus.BAD_REQUEST)))
+                   .then();
     }
 }
