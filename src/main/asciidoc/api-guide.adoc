@@ -1,0 +1,68 @@
+= API Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs'
+:toc: left
+
+[[associates]]
+=== Associates
+
+==== Create a new associate
+
+===== Success request example
+
+include::{snippets}/save_success/curl-request.adoc[]
+
+===== Success response example
+
+include::{snippets}/save_success/http-response.adoc[]
+
+===== Error response examples
+
+Null CPF
+include::{snippets}/save_error_cpf_notnull/http-response.adoc[]
+
+Invalid CPF
+include::{snippets}/save_error_cpf_invalid/http-response.adoc[]
+
+Null name
+include::{snippets}/save_error_name_notnull/http-response.adoc[]
+
+Empty name
+include::{snippets}/save_error_name_notempty/http-response.adoc[]
+
+==== Listing
+
+===== Success request example
+
+include::{snippets}/find_all_success/curl-request.adoc[]
+
+===== Success response example
+
+include::{snippets}/find_all_success/http-response.adoc[]
+
+Null CPF
+include::{snippets}/save_error_cpf_notnull/http-response.adoc[]
+
+Invalid CPF
+include::{snippets}/save_error_cpf_invalid/http-response.adoc[]
+
+Null name
+include::{snippets}/save_error_name_notnull/http-response.adoc[]
+
+Empty name
+include::{snippets}/save_error_name_notempty/http-response.adoc[]
+
+==== Find one associate by id
+
+===== Success request example
+
+include::{snippets}/find_by_id_success/curl-request.adoc[]
+
+===== Success response example
+
+include::{snippets}/find_by_id_success/http-response.adoc[]
+
+===== Error response example if associate does not exists
+
+include::{snippets}/find_by_id_not_found_error/http-response.adoc[]

@@ -20,6 +20,5 @@ public class AssociateRequest {
     private String name;
     @CPF
     @NotNull
-    @NotEmpty
     private String cpf;
 }

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/v1/associates")
 public class AssociateController {
@@ -18,7 +20,7 @@ public class AssociateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<AssociateResponse> save(@RequestBody AssociateRequest request){
+    public Mono<AssociateResponse> save(@Valid @RequestBody AssociateRequest request){
         return this.facade.save(request);
     }
 
