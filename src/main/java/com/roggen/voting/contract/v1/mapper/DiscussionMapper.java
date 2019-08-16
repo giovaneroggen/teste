@@ -53,8 +53,10 @@ public class DiscussionMapper {
         switch (vote){
             case YES:
                 d.setYesQuantity(d.getYesQuantity() + 1L);
+                break;
             case NO:
                 d.setNoQuantity(d.getNoQuantity() + 1L);
+                break;
         }
     }
 }
