@@ -1,0 +1,20 @@
+spring:
+  rabbitmq:
+    addresses: localhost:5672
+  cloud:
+    stream:
+      bindings:
+        discussion-result-output:
+            destination: discussion-result-queue
+            content-type: application/json
+
+# to activate local consumer
+#
+#        discussion-result-input:
+#            destination: discussion-result-queue
+#            consumer:
+#                concurrency: 1
+#
+#rabbit:
+#  listener:
+#    active: true

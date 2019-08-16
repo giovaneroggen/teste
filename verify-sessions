@@ -1,0 +1,2 @@
+* * * * * sleep 15 && curl 'http://localhost:8080/v1/discussions/sessions'
+
