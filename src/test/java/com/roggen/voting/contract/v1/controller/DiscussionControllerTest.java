@@ -21,6 +21,8 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +41,7 @@ public class DiscussionControllerTest extends WebFluxTest {
     protected void beforeEach(ApplicationContext applicationContext, RestDocumentationContextProvider restDocumentation) {
         super.beforeEach(applicationContext, restDocumentation);
         this.repository.deleteAll().subscribe();
+        this.associateRepository.deleteAll().subscribe();
     }
 
     @Test
@@ -184,7 +187,7 @@ public class DiscussionControllerTest extends WebFluxTest {
                                           .closed(false)
                                           .timeout(1L)
                                           .createdDate(LocalDateTime.now().minusMinutes(10L))
-                                          .activatedDate(LocalDateTime.now().minusMinutes(2L))
+                                          .activatedDate(LocalDateTime.now().minusMinutes(5L))
                                           .build();
         this.repository
                 .save(discussion)
@@ -200,8 +203,8 @@ public class DiscussionControllerTest extends WebFluxTest {
 
         StepVerifier.create(this.repository.findAll())
                 .consumeNextWith(d -> {
-                    assertTrue(d.getClosed());
                     assertFalse(d.getActive());
+                    assertTrue(d.getClosed());
                 }).verifyComplete();
     }
 
@@ -215,7 +218,7 @@ public class DiscussionControllerTest extends WebFluxTest {
         );
         Associate associate = Associate.builder()
                 .name("Teste 01719462003")
-                .name("01719462003")
+                .cpf("01719462003")
                 .build();
         associate = this.associateRepository.save(associate).block();
 
@@ -250,6 +253,202 @@ public class DiscussionControllerTest extends WebFluxTest {
                     assertEquals(1L, d.getYesQuantity().longValue());
                     assertEquals(0L, d.getNoQuantity().longValue());
                 }).verifyComplete();
+    }
+
+    @Test
+    public void vote_error_discussion_notavailabletovote(){
+        VoteRequest build = VoteRequest.builder()
+                .vote(VoteEnum.YES)
+                .associateId("JIioerwjr08j209e2")
+                .build();
+
+        this.webTestClient
+                .post()
+                .uri("/{id}", "JIioerwjr08j209e2")
+                .body(Mono.just(build), VoteRequest.class)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .consumeWith(document("discussion/vote_error_discussion_notavailabletovote"));
+    }
+
+    @Test
+    public void vote_error_associate_notfound(){
+        Discussion discussion = Discussion.builder()
+                .discussion("Teste 01719462003")
+                .active(true)
+                .closed(false)
+                .timeout(2L)
+                .createdDate(LocalDateTime.now().minusMinutes(10L))
+                .activatedDate(LocalDateTime.now().minusMinutes(1L))
+                .build();
+
+        discussion = this.repository.save(discussion).block();
+
+        VoteRequest build = VoteRequest.builder()
+                .vote(VoteEnum.YES)
+                .associateId("JIioerwjr08j209e2")
+                .build();
+
+        this.webTestClient
+                .post()
+                .uri("/{id}", discussion.getId())
+                .body(Mono.just(build), VoteRequest.class)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .consumeWith(document("discussion/vote_error_associate_notfound"));
+
+        StepVerifier.create(this.repository.findAll())
+                .consumeNextWith(d -> {
+                    assertEquals(0, d.getAssociatedList().size());
+                    assertEquals(0L, d.getYesQuantity().longValue());
+                    assertEquals(0L, d.getNoQuantity().longValue());
+                }).verifyComplete();
+    }
+
+    @Test
+    public void vote_error_associate_unable(){
+        super.mockWebServer.enqueue(
+                new MockResponse()
+                        .setResponseCode(200)
+                        .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .setBody("{\"status\": \"UNABLE_TO_VOTE\"}")
+        );
+        Associate associate = Associate.builder()
+                .name("Teste 01719462003")
+                .cpf("01719462003")
+                .build();
+        associate = this.associateRepository.save(associate).block();
+
+        Discussion discussion = Discussion.builder()
+                .discussion("Teste 01719462003")
+                .active(true)
+                .closed(false)
+                .timeout(2L)
+                .createdDate(LocalDateTime.now().minusMinutes(10L))
+                .activatedDate(LocalDateTime.now().minusMinutes(1L))
+                .build();
+
+        discussion = this.repository.save(discussion).block();
+
+        VoteRequest build = VoteRequest.builder()
+                .vote(VoteEnum.YES)
+                .associateId(associate.getId())
+                .build();
+
+        this.webTestClient
+                .post()
+                .uri("/{id}", discussion.getId())
+                .body(Mono.just(build), VoteRequest.class)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .consumeWith(document("discussion/vote_error_associate_unable"));
+
+        StepVerifier.create(this.repository.findAll())
+                .consumeNextWith(d -> {
+                    assertEquals(0, d.getAssociatedList().size());
+                    assertEquals(0L, d.getYesQuantity().longValue());
+                    assertEquals(0L, d.getNoQuantity().longValue());
+                }).verifyComplete();
+    }
+
+    @Test
+    public void vote_error_associate_repeatednotallowed(){
+        super.mockWebServer.enqueue(
+                new MockResponse()
+                        .setResponseCode(200)
+                        .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .setBody("{\"status\": \"ABLE_TO_VOTE\"}")
+        );
+        Associate associate = Associate.builder()
+                .name("Teste 01719462003")
+                .cpf("01719462003")
+                .build();
+        associate = this.associateRepository.save(associate).block();
+
+        List<String> associatedList = new ArrayList<>();
+        associatedList.add(associate.getId());
+        Discussion discussion = Discussion.builder()
+                .discussion("Teste 01719462003")
+                .associatedList(associatedList)
+                .active(true)
+                .closed(false)
+                .timeout(2L)
+                .createdDate(LocalDateTime.now().minusMinutes(10L))
+                .activatedDate(LocalDateTime.now().minusMinutes(1L))
+                .build();
+        discussion = this.repository.save(discussion).block();
+
+        VoteRequest build = VoteRequest.builder()
+                .vote(VoteEnum.YES)
+                .associateId(associate.getId())
+                .build();
+
+        this.webTestClient
+                .post()
+                .uri("/{id}", discussion.getId())
+                .body(Mono.just(build), VoteRequest.class)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .consumeWith(document("discussion/vote_error_associate_repeatednotallowed"));
+
+        StepVerifier.create(this.repository.findAll())
+                .consumeNextWith(d -> {
+                    assertEquals(1, d.getAssociatedList().size());
+                    assertEquals(0L, d.getYesQuantity().longValue());
+                    assertEquals(0L, d.getNoQuantity().longValue());
+                }).verifyComplete();
+    }
+
+    @Test
+    public void result_success(){
+        Associate associate = Associate.builder()
+                .name("Teste 01719462003")
+                .cpf("01719462003")
+                .build();
+        associate = this.associateRepository.save(associate).block();
+
+        List<String> associatedList = new ArrayList<>();
+        associatedList.add(associate.getId());
+        Discussion discussion = Discussion.builder()
+                .discussion("Teste 01719462003")
+                .associatedList(associatedList)
+                .active(false)
+                .closed(true)
+                .timeout(2L)
+                .yesQuantity(1L)
+                .noQuantity(0L)
+                .createdDate(LocalDateTime.now().minusMinutes(10L))
+                .activatedDate(LocalDateTime.now().minusMinutes(1L))
+                .build();
+        discussion = this.repository.save(discussion).block();
+
+        this.webTestClient
+                .get()
+                .uri("/{id}", discussion.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(document("discussion/result_success"))
+                .jsonPath("$.id").value(equalTo(discussion.getId()))
+                .jsonPath("$.discussion").value(equalTo(discussion.getDiscussion()))
+                .jsonPath("$.total").value(equalTo(1))
+                .jsonPath("$.yesQuantity").value(equalTo(1))
+                .jsonPath("$.noQuantity").value(equalTo(0));
+    }
+
+    @Test
+    public void result_error_discussion_notavailable(){
+        this.webTestClient
+                .get()
+                .uri("/{id}", "1io2j3091j3129j302j1j13")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .consumeWith(document("discussion/result_error_discussion_notavailable"));
     }
 
     @Override

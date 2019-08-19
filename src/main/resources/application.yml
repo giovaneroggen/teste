@@ -18,3 +18,5 @@ spring:
 #rabbit:
 #  listener:
 #    active: true
+
+herokuapp: https://user-info.herokuapp.com

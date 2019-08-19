@@ -5,64 +5,144 @@
 :toc: left
 
 [[associates]]
-=== Associates
+= Associates
 
-==== Create a new associate
+== Create a new associate
 
-===== Success request example
+=== Success request example
 
-include::{snippets}/save_success/curl-request.adoc[]
+include::{snippets}/associate/save_success/curl-request.adoc[]
 
-===== Success response example
+=== Success response example
 
-include::{snippets}/save_success/http-response.adoc[]
+include::{snippets}/associate/save_success/http-response.adoc[]
 
-===== Error response examples
-
-Null CPF
-include::{snippets}/save_error_cpf_notnull/http-response.adoc[]
-
-Invalid CPF
-include::{snippets}/save_error_cpf_invalid/http-response.adoc[]
-
-Null name
-include::{snippets}/save_error_name_notnull/http-response.adoc[]
-
-Empty name
-include::{snippets}/save_error_name_notempty/http-response.adoc[]
-
-==== Listing
-
-===== Success request example
-
-include::{snippets}/find_all_success/curl-request.adoc[]
-
-===== Success response example
-
-include::{snippets}/find_all_success/http-response.adoc[]
+=== Error response examples
 
 Null CPF
-include::{snippets}/save_error_cpf_notnull/http-response.adoc[]
+include::{snippets}/associate/save_error_cpf_notnull/http-response.adoc[]
 
 Invalid CPF
-include::{snippets}/save_error_cpf_invalid/http-response.adoc[]
+include::{snippets}/associate/save_error_cpf_invalid/http-response.adoc[]
 
 Null name
-include::{snippets}/save_error_name_notnull/http-response.adoc[]
+include::{snippets}/associate/save_error_name_notnull/http-response.adoc[]
 
 Empty name
-include::{snippets}/save_error_name_notempty/http-response.adoc[]
+include::{snippets}/associate/save_error_name_notempty/http-response.adoc[]
 
-==== Find one associate by id
+== Listing
 
-===== Success request example
+=== Success request example
 
-include::{snippets}/find_by_id_success/curl-request.adoc[]
+include::{snippets}/associate/find_all_success/curl-request.adoc[]
 
-===== Success response example
+=== Success response example
 
-include::{snippets}/find_by_id_success/http-response.adoc[]
+include::{snippets}/associate/find_all_success/http-response.adoc[]
 
-===== Error response example if associate does not exists
+== Find one
 
-include::{snippets}/find_by_id_not_found_error/http-response.adoc[]
+=== Success request example
+
+include::{snippets}/associate/find_by_id_success/curl-request.adoc[]
+
+=== Success response example
+
+include::{snippets}/associate/find_by_id_success/http-response.adoc[]
+
+=== Error response example if associate does not exists
+
+include::{snippets}/associate/find_by_id_not_found_error/http-response.adoc[]
+
+[[discussions]]
+= Discussions
+
+== Create a new discussion
+
+=== Success request example
+
+include::{snippets}/discussion/save_success/curl-request.adoc[]
+
+=== Success response example
+
+include::{snippets}/discussion/save_success/http-response.adoc[]
+
+=== Error response examples
+
+Null Discussion
+include::{snippets}/discussion/save_error_discussion_notnull/http-response.adoc[]
+
+Empty Discussion
+include::{snippets}/discussion/save_error_discussion_notempty/http-response.adoc[]
+
+== Listing
+
+=== Success request example
+
+include::{snippets}/discussion/find_all_success/curl-request.adoc[]
+
+=== Success response example
+
+include::{snippets}/discussion/find_all_success/http-response.adoc[]
+
+== Start a new session
+
+=== Success request example
+
+include::{snippets}/discussion/start_success/curl-request.adoc[]
+
+=== Success response example
+
+include::{snippets}/discussion/start_success/http-response.adoc[]
+
+=== Error response examples
+
+Discussion Not Available
+include::{snippets}/discussion/start_error_notavailable/http-response.adoc[]
+
+== Verify session expiration
+
+This api will be invoked minute by minute via crontab
+
+=== Success request example
+
+include::{snippets}/discussion/verify_expiration_success/curl-request.adoc[]
+
+=== Success response example
+
+include::{snippets}/discussion/verify_expiration_success/http-response.adoc[]
+
+== Vote
+
+=== Success request example
+
+include::{snippets}/discussion/vote_success/curl-request.adoc[]
+
+=== Success response example
+
+include::{snippets}/discussion/vote_success/http-response.adoc[]
+
+=== Error response examples
+
+Discussion Not Available
+include::{snippets}/discussion/vote_error_discussion_notavailabletovote/http-response.adoc[]
+
+Associate Not Found
+include::{snippets}/discussion/vote_error_associate_notfound/http-response.adoc[]
+
+Associate Can't Vote
+include::{snippets}/discussion/vote_error_associate_unable/http-response.adoc[]
+
+Repeated Vote
+include::{snippets}/discussion/vote_error_associate_repeatednotallowed/http-response.adoc[]
+
+== Result
+
+=== Success request example
+
+include::{snippets}/discussion/result_success/curl-request.adoc[]
+
+=== Success response example
+
+include::{snippets}/discussion/result_success/http-response.adoc[]

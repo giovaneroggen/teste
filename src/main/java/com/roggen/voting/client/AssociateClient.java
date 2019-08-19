@@ -17,7 +17,7 @@ public class AssociateClient {
     public Mono<Void> verifyIfAssociateCanVote(String cpf) {
         return this.webClient
                    .get()
-                   .uri("https://user-info.herokuapp.com/users/{cpf}", cpf)
+                   .uri("/users/{cpf}", cpf)
                    .retrieve()
                    .onStatus(HttpStatus.NOT_FOUND::equals, response -> Mono.error(new GenericException("associate.not.found", HttpStatus.NOT_FOUND)))
                    .bodyToMono(AssociateResponse.class)

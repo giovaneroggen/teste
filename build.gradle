@@ -55,7 +55,10 @@ dependencies {
     testCompile("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testCompile('org.junit.jupiter:junit-jupiter-api')
     testCompile('org.junit.jupiter:junit-jupiter-engine')
-    testCompile("com.squareup.okhttp3:mockwebserver:4.1.0")
+    testCompile("com.squareup.okhttp3:mockwebserver:3.7.0")
+    testCompile("org.springframework.cloud:spring-cloud-stream-test-support")
+    testCompile("com.github.kstyrc:embedded-redis:0.6")
+
 
     asciidoctor "org.springframework.restdocs:spring-restdocs-asciidoctor"
 }

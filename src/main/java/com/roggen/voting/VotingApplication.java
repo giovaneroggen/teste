@@ -5,9 +5,11 @@ import com.roggen.voting.data.Associate;
 import com.roggen.voting.data.repository.AssociateRepository;
 import com.roggen.voting.messaging.queue.DiscussionResultQueue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
@@ -33,8 +35,9 @@ public class VotingApplication implements CommandLineRunner {
     }
 
     @Bean
-    public WebClient webClient(){
-        return WebClient.create();
+    @ConditionalOnMissingBean
+    public WebClient webClient(@Value("${herokuapp}") String externalApp){
+        return WebClient.create(externalApp);
     }
 
     @Override

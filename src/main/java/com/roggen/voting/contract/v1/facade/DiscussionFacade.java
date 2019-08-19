@@ -79,13 +79,13 @@ public class DiscussionFacade {
 
     private Mono<Discussion> findAvailableToVote(String id) {
         return this.service
-                .findAvailableToVote(id)
-                    .switchIfEmpty(Mono.defer(() -> Mono.error(new GenericException("discussion.not.available", HttpStatus.BAD_REQUEST))));
+                   .findAvailableToVote(id)
+                   .switchIfEmpty(Mono.defer(() -> Mono.error(new GenericException("discussion.not.available", HttpStatus.BAD_REQUEST))));
     }
 
     private Mono<Discussion> findAvailableToStart(String id) {
         return this.service
-                .findAvailableToStart(id)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new GenericException("discussion.not.available", HttpStatus.BAD_REQUEST))));
+                   .findAvailableToStart(id)
+                   .switchIfEmpty(Mono.defer(() -> Mono.error(new GenericException("discussion.not.available", HttpStatus.BAD_REQUEST))));
     }
 }
