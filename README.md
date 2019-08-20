@@ -1,5 +1,5 @@
-Java: 11
-Gradle: 4.9
+## Java: 11
+## Gradle: 4.9
 
 - sudo docker run -d -p 27017:27017 mongo
 
