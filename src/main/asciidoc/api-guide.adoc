@@ -4,10 +4,17 @@
 :source-highlighter: highlightjs'
 :toc: left
 
+
 [[associates]]
 = Associates
 
 == Create a new associate
+
+=== Success tabela example
+
+include::{snippets}/associate/save_success/request-fields.adoc[]
+
+include::{snippets}/associate/save_success/response-fields.adoc[]
 
 === Success request example
 

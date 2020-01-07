@@ -9,12 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.payload.PayloadDocumentation;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 
 public class AssociateControllerTest extends WebFluxTest {
@@ -27,7 +29,7 @@ public class AssociateControllerTest extends WebFluxTest {
     protected void beforeEach(ApplicationContext applicationContext, RestDocumentationContextProvider restDocumentation) {
         super.beforeEach(applicationContext, restDocumentation);
         repository.deleteAll()
-                  .subscribe();
+                  .block();
     }
 
     @Test
@@ -43,7 +45,17 @@ public class AssociateControllerTest extends WebFluxTest {
             .exchange()
             .expectStatus().isCreated()
             .expectBody()
-            .consumeWith(document("associate/save_success"))
+            .consumeWith(document("associate/save_success",
+                    requestFields(
+                        fieldWithPath("name").description("NOME TAL").type("String").optional(),
+                        fieldWithPath("cpf").description("CPF").type("String")
+                    ),
+                    responseFields(
+                        fieldWithPath("id").description("ID TAL").type("String"),
+                        fieldWithPath("name").description("CPF TAL").type("String"),
+                        fieldWithPath("cpf").description("CPF").type("String")
+                    )
+            ))
             .jsonPath("$.name").value(equalTo(request.getName()))
             .jsonPath("$.cpf").value(equalTo(request.getCpf()))
             .jsonPath("$.id").isNotEmpty();
@@ -172,7 +184,7 @@ public class AssociateControllerTest extends WebFluxTest {
                                    .name("01719462003")
                                    .build();
         this.repository
-                .save(build).subscribe();
+                .save(build).block();
 
         this.webTestClient
                 .get()

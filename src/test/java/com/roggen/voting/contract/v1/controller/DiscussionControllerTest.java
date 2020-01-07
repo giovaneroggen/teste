@@ -40,8 +40,8 @@ public class DiscussionControllerTest extends WebFluxTest {
     @BeforeEach
     protected void beforeEach(ApplicationContext applicationContext, RestDocumentationContextProvider restDocumentation) {
         super.beforeEach(applicationContext, restDocumentation);
-        this.repository.deleteAll().subscribe();
-        this.associateRepository.deleteAll().subscribe();
+        this.repository.deleteAll().block();
+        this.associateRepository.deleteAll().block();
     }
 
     @Test
@@ -113,7 +113,7 @@ public class DiscussionControllerTest extends WebFluxTest {
                 .discussion("Teste 01719462003")
                 .build();
         this.repository
-                .save(build).subscribe();
+                .save(build).block();
         this.webTestClient
                 .get()
                 .exchange()
@@ -191,7 +191,7 @@ public class DiscussionControllerTest extends WebFluxTest {
                                           .build();
         this.repository
                 .save(discussion)
-                .subscribe();
+                .block();
 
         this.webTestClient
                 .get()
